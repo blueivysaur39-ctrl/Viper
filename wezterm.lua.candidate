@@ -1,0 +1,105 @@
+-- STAGED, NOT LIVE. Increment 1: leader key + pane/tab navigation.
+-- Proven 2026-09-14: parses clean (ls-fonts exit 0), 29 LEADER bindings
+-- registered (show-keys). WezTerm never reads this filename -- rename to
+-- wezterm.lua to activate.
+local wezterm = require 'wezterm'
+local act = wezterm.action
+local config = wezterm.config_builder()
+
+-- ===========================================================================
+-- Domain: panes spawn inside WSL2; the config itself is read by Windows.
+-- ===========================================================================
+config.default_domain = 'WSL:Ubuntu-24.04'
+
+-- ===========================================================================
+-- Appearance
+-- ===========================================================================
+config.color_scheme = 'Catppuccin Mocha'
+config.colors = {
+  background = '#1E1E1E',
+  foreground = '#D4D4D4',
+  --         black      red        green      yellow     blue       magenta    cyan       white
+  ansi    = { '#1E1E1E', '#cc4040', '#80d467', '#e5c07b', '#61afef', '#c678dd', '#7f95b8', '#d2cbc0' },
+  brights = { '#5c6370', '#ff6b6b', '#8fe388', '#f5d67b', '#9EDBFF', '#d7a8ff', '#a0c8e0', '#ffffff' },
+}
+
+-- ===========================================================================
+-- Leader: CTRL+Space. Chosen so every CTRL chord stays free for the shell
+-- and for Claude Code. Press it, then the next key acts on WezTerm.
+-- ===========================================================================
+config.leader = { key = 'Space', mods = 'CTRL', timeout_milliseconds = 1000 }
+
+-- ===========================================================================
+-- Keys
+-- ===========================================================================
+config.keys = {
+  -- Paste habits (inherited, unchanged) ------------------------------------
+  { key = 'v', mods = 'CTRL', action = act.PasteFrom 'Clipboard' },
+
+  -- Send a literal CTRL+Space through to the shell -------------------------
+  { key = 'Space', mods = 'LEADER|CTRL', action = act.SendKey { key = 'Space', mods = 'CTRL' } },
+
+  -- Splits: backslash splits side-by-side, minus splits stacked ------------
+  { key = '\\', mods = 'LEADER', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' } },
+  { key = '|', mods = 'LEADER|SHIFT', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' } },
+  { key = '-', mods = 'LEADER', action = act.SplitVertical { domain = 'CurrentPaneDomain' } },
+
+  -- Pane navigation, vim keys and arrows -----------------------------------
+  { key = 'h', mods = 'LEADER', action = act.ActivatePaneDirection 'Left' },
+  { key = 'j', mods = 'LEADER', action = act.ActivatePaneDirection 'Down' },
+  { key = 'k', mods = 'LEADER', action = act.ActivatePaneDirection 'Up' },
+  { key = 'l', mods = 'LEADER', action = act.ActivatePaneDirection 'Right' },
+  { key = 'LeftArrow', mods = 'LEADER', action = act.ActivatePaneDirection 'Left' },
+  { key = 'DownArrow', mods = 'LEADER', action = act.ActivatePaneDirection 'Down' },
+  { key = 'UpArrow', mods = 'LEADER', action = act.ActivatePaneDirection 'Up' },
+  { key = 'RightArrow', mods = 'LEADER', action = act.ActivatePaneDirection 'Right' },
+
+  -- Pane lifecycle ---------------------------------------------------------
+  { key = 'z', mods = 'LEADER', action = act.TogglePaneZoomState },
+  { key = 'x', mods = 'LEADER', action = act.CloseCurrentPane { confirm = true } },
+  { key = 'q', mods = 'LEADER', action = act.PaneSelect { alphabet = 'asdfghjkl' } },
+
+  -- Tabs -------------------------------------------------------------------
+  { key = 'c', mods = 'LEADER', action = act.SpawnTab 'CurrentPaneDomain' },
+  { key = 'n', mods = 'LEADER', action = act.ActivateTabRelative(1) },
+  { key = 'p', mods = 'LEADER', action = act.ActivateTabRelative(-1) },
+  { key = 'X', mods = 'LEADER|SHIFT', action = act.CloseCurrentTab { confirm = true } },
+
+  -- Resize mode: LEADER r, then hjkl/arrows to nudge, Escape to leave ------
+  { key = 'r', mods = 'LEADER', action = act.ActivateKeyTable {
+      name = 'resize_pane', one_shot = false, timeout_milliseconds = 2000 } },
+}
+
+-- LEADER + 1..9 jumps straight to a tab
+for i = 1, 9 do
+  table.insert(config.keys, {
+    key = tostring(i),
+    mods = 'LEADER',
+    action = act.ActivateTab(i - 1),
+  })
+end
+
+config.key_tables = {
+  resize_pane = {
+    { key = 'h', action = act.AdjustPaneSize { 'Left', 3 } },
+    { key = 'j', action = act.AdjustPaneSize { 'Down', 3 } },
+    { key = 'k', action = act.AdjustPaneSize { 'Up', 3 } },
+    { key = 'l', action = act.AdjustPaneSize { 'Right', 3 } },
+    { key = 'LeftArrow', action = act.AdjustPaneSize { 'Left', 3 } },
+    { key = 'DownArrow', action = act.AdjustPaneSize { 'Down', 3 } },
+    { key = 'UpArrow', action = act.AdjustPaneSize { 'Up', 3 } },
+    { key = 'RightArrow', action = act.AdjustPaneSize { 'Right', 3 } },
+    { key = 'Escape', action = act.PopKeyTable },
+    { key = 'Enter', action = act.PopKeyTable },
+  },
+}
+
+-- ===========================================================================
+-- Mouse
+-- ===========================================================================
+config.mouse_bindings = {
+  { event = { Down = { streak = 1, button = 'Right' } }, mods = 'NONE',
+    action = act.PasteFrom 'Clipboard' },
+}
+
+return config
