@@ -7,3 +7,4 @@
 - [Terseness + ask before building](feedback_terse_and_ask.md) — short answers; a question is not a work order, confirm before creating anything.
 - [Smallest path, no scaffolding](feedback_smallest_path.md) — comment the Lua instead of building docs/generators around it; ship the visible change first.
 - [Isolate the variable, don't capitulate](feedback_dont_capitulate.md) — a failed UI attempt means my approach was wrong, not that the tool cannot do it.
+- [ConPTY cursor flicker](project_conpty_flicker.md) — Claude cursor flash measured to the byte: bundled ConPTY + 3ms coalesce; fix = coalesce_delay_ms 0 (confirmed 2026-09-16).

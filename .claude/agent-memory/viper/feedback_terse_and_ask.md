@@ -20,6 +20,12 @@ section. No summary of what I just did unless he asks. If a mental model is
 genuinely needed (he said "im confused" / "im lost"), that earns prose — but
 that is the exception, and he will say so.
 
+**Repeated 2026-09-16:** "i have 8 things going on... concise tl;dr." My
+reply on the cursor flash (diagnosis + Windows Terminal comparison) ran
+several sections long. He reads between agents: open with a 3–5 line TL;DR
+(what changed, what he must do, what's next). Put detail after it, only if
+it matters.
+
 ### 2. A question is not a work order
 He asked "can we set up a wezterm repo...?" and I ran `git init` and committed.
 He also asked me to stop, then I staged a config file anyway. Both wrong.

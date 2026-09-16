@@ -17,6 +17,13 @@ things at once (fancy tab bar **and** integrated title buttons); I had never
 tested them apart. Isolating them found the answer in one try, and the feature
 he wanted worked.
 
+2026-09-16, confirmed from the other side: I told him "no config can fix" the
+cursor flash and proposed swapping files in Program Files. He called that too
+dramatic and nearly left WezTerm. Measuring the bytes instead (a ConPTY harness
+plus the stable source) turned up a one-line config fix, and he confirmed it
+worked ("you saved wezterm"). Before a "can't" or a "his hand" escalation,
+measure the actual mechanism.
+
 **Why:** He can see the rendered window and search for prior art; I cannot. If
 he says it is possible, it is — my failure is evidence about *my* approach, not
 about the tool's limits. Offering him a menu of retreats spends his attention on
