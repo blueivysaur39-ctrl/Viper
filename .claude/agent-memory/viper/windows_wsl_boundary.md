@@ -16,10 +16,16 @@ a turn on `No such file or directory`.
 
 **How to apply:**
 - Config: `/mnt/c/Users/Michael/.config/wezterm/wezterm.lua`.
-- Binary: `"/mnt/c/Program Files/WezTerm/wezterm.exe"` — full path, quoted. It is
-  **not** on `PATH`: `/etc/wsl.conf` sets `[interop] appendWindowsPath=false`.
-- Proof after every edit: `"/mnt/c/Program Files/WezTerm/wezterm.exe" ls-fonts`
-  exits 0; a Lua error surfaces there.
+- Binary (since 2026-09-29, his ruling: nightly only):
+  `"/mnt/c/Users/Michael/AppData/Local/Programs/WezTerm-20260929/wezterm.exe"`
+  (build 20260929-043349-cab25161, portable zip). The folder is the pin: a new
+  build goes in a new folder. The 20240203 build stays in `C:\Program Files\WezTerm`
+  as rollback. Full path, quoted. It is **not** on `PATH`: `/etc/wsl.conf` sets
+  `[interop] appendWindowsPath=false`.
+- Proof after every edit: `<binary> --config-file 'C:\Users\Michael\.config\wezterm\wezterm.lua' ls-fonts`
+  exits 0; a Lua error surfaces there. Stage structural edits in the scratchpad
+  and prove them with `--config-file <wslpath -w stage>` first: every save of the
+  live file reloads his GUI, and a broken one shows him an error pop-up.
 - No path mangling in WSL — pass `/mnt/c/...` straight through.
 - Still re-run `uname -a` on boot; the harness has changed once already.
 

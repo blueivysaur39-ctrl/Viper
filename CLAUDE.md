@@ -27,11 +27,13 @@ two repos, both descended from `5fd7ef4`:
 - The live config is `/mnt/c/Users/Michael/.config/wezterm/wezterm.lua`
   (= `C:\Users\Michael\.config\wezterm\wezterm.lua`). Edit it **there**.
   Never keep a copy of it in this repo.
-- The binary is reachable **by full path only**:
-  `"/mnt/c/Program Files/WezTerm/wezterm.exe"` (build `20240203-110809-5046fc22`).
+- The binary is reachable **by full path only**. Since 2026-09-29 he runs the
+  nightly: `"/mnt/c/Users/Michael/AppData/Local/Programs/WezTerm-20260929/wezterm.exe"`
+  (build `20260929-043349-cab25161`; the folder is the pin). The rollback is
+  `"/mnt/c/Program Files/WezTerm/wezterm.exe"` (`20240203-110809-5046fc22`).
 - Proof of a good save, naming the file explicitly so a silent fallback cannot
   pass for a pass:
-  `"/mnt/c/Program Files/WezTerm/wezterm.exe" --config-file 'C:\Users\Michael\.config\wezterm\wezterm.lua' ls-fonts`
+  `<nightly wezterm.exe> --config-file 'C:\Users\Michael\.config\wezterm\wezterm.lua' ls-fonts`
   exits 0. A config that fails to parse is ignored and WezTerm runs on defaults.
 - Edit the live file directly; the `Wezterm` repo is the undo. The staging file
   `wezterm.lua.candidate` was deleted 2026-09-14 — it drifted from live twice

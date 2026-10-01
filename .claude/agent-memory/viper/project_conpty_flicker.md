@@ -25,4 +25,8 @@ On 2026-09-16 I measured why Claude Code's cursor flashes in WezTerm while it th
 1. Swap the ConPTY pair (proven clean in the harness).
 2. Move the bundled conpty.dll aside so WezTerm uses the inbox ConPTY. Check first that WezTerm falls back to it.
 
-Both are his hand. For any other TUI flicker in WSL panes, look at ConPTY first. See [[windows-wsl-boundary]].
+Both are his hand. Lever 2 does not cure the color-query loss, but lever 1 does; see [[project-conpty-color-query]]. For any other TUI flicker in WSL panes, look at ConPTY first. See [[windows-wsl-boundary]].
+
+**2026-09-29: he moved to nightly**, which bundles ConPTY 1.22.250204002
+(changelog). These measurements were taken on 20240203's bundle, so re-measure
+before acting on them.
