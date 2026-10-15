@@ -10,5 +10,6 @@
 - [ConPTY cursor flicker](project_conpty_flicker.md) — Claude cursor flash measured to the byte: bundled ConPTY + 3ms coalesce; fix = coalesce_delay_ms 0 (confirmed 2026-09-16).
 - [WSL spawn timeouts](project_wsl_spawn_timeout.md) — blank tabs = WSL RAM exhaustion + order-7 fragmentation (both, his ruling); why agent teams leave Cursor.
 - [ConPTY eats color queries](project_conpty_color_query.md) — why Codex has no prompt bg in WezTerm; bundled+inbox ConPTY drop OSC 11, NuGet 1.24 passes it.
-- [Icon font drop, pending](project_icon_font_drop.md) — his call, not now: install current Symbols Nerd Font so all codicons work; built-in stops at U+EBEB.
+- [Codicon table stale, font fine](project_icon_font_drop.md) — nightly's built-in font draws codicons past U+EBEB (2026-10-09); no install needed, CODICONS regen is his call.
+- [WezTerm log files + Lua timing](reference_wezterm_logs.md) — ~\.local\share\wezterm\wezterm-gui.exe-log-<pid>.txt, lazy, no date; epoch-ms via format('%s%3f').
 - [Config-load hazard + process per window](project_config_load_hazard.md) — windows re-run the config on the GUI thread; load reads only wezterm.lua; ALT+N = new process.
