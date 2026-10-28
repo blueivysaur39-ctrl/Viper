@@ -13,3 +13,4 @@
 - [Codicon table stale, font fine](project_icon_font_drop.md) — nightly's built-in font draws codicons past U+EBEB (2026-10-09); no install needed, CODICONS regen is his call.
 - [WezTerm log files + Lua timing](reference_wezterm_logs.md) — ~\.local\share\wezterm\wezterm-gui.exe-log-<pid>.txt, lazy, no date; epoch-ms via format('%s%3f').
 - [Config-load hazard + process per window](project_config_load_hazard.md) — windows re-run the config on the GUI thread; load reads only wezterm.lua; ALT+N = new process.
+- [Inline-code sky blue](project_inline_code_blue.md) — Claude inline code = WezTerm bright blue #9EDBFF via dark-ansi; he likes it, keep slot 12.

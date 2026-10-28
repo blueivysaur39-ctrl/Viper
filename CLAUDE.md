@@ -26,7 +26,10 @@ two repos, both descended from `5fd7ef4`:
   `automount metadata`, and `interop.appendWindowsPath=false`.
 - The live config is `/mnt/c/Users/Michael/.config/wezterm/wezterm.lua`
   (= `C:\Users\Michael\.config\wezterm\wezterm.lua`). Edit it **there**.
-  Never keep a copy of it in this repo.
+  Never keep a working copy of it in this repo. One exception, his ruling
+  2026-10-28: `crossover/wezterm.lua`, a byte-exact snapshot for the Linux
+  crossover. It is never edited, only re-copied from live (see
+  `crossover/LEDGER.md`).
 - The binary is reachable **by full path only**. Since 2026-09-29 he runs the
   nightly: `"/mnt/c/Users/Michael/AppData/Local/Programs/WezTerm-20260929/wezterm.exe"`
   (build `20260929-043349-cab25161`; the folder is the pin). The rollback is
