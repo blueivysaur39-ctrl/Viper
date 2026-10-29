@@ -8,6 +8,32 @@ Boot into Linux and WezTerm feels nearly identical to Windows: same colors,
 tab bar, agent icons, agent picker, keys and habits. Consolas comes too,
 copied from this machine's Windows (see the font ruling below).
 
+## Start here on Linux
+
+Everything before the flip was done by 2026-10-29. If `claude --resume`
+doesn't bring the old session back, start from this list. Do it with Michael,
+in order, one step at a time.
+
+1. **Check that the export arrived.**
+   - The .deb's sha256 matches "The WezTerm build" below.
+   - `ls ~/.local/share/fonts/consolas/` shows four files, and
+     `fc-match Consolas` names `consola.ttf`.
+2. **Install WezTerm (Michael's hand).**
+   `cd ~/repos/Viper/crossover/wezterm-nightly-20260929-cab25161 && sudo apt install ./wezterm-nightly.Ubuntu22.04.deb`,
+   then `wezterm --version` should read `20260929-043349-cab25161`.
+3. **Put the config at `~/.config/wezterm/wezterm.lua`, sha256 `a749c103…`.**
+   Two ways, his call:
+   - `git clone https://github.com/blueivysaur39-ctrl/Wezterm.git ~/.config/wezterm`
+     (commit `5baae32` is this exact file, and the clone keeps the history);
+   - or copy `crossover/wezterm.lua` there.
+4. **Port the Windows-shaped spots below,** one at a time. Prove each with
+   `ls-fonts`, then have him look.
+5. **Run "Checks on Linux".**
+
+`/mnt/c` missing means the flip has happened. From then on, `CLAUDE.md`'s
+"What is true now" and the WSL-boundary memory describe the old seat.
+Rewriting them is part of the port.
+
 ## The snapshot
 
 `crossover/wezterm.lua` is a byte-exact copy of the live config,
@@ -16,6 +42,7 @@ copied from this machine's Windows (see the font ruling below).
 | Copied | Lines | sha256 | Live repo at the time |
 |---|---|---|---|
 | 2026-10-28 | 1142 | `a749c103a1fca19449dac553833ae4e0b89d55c921cefb64c3d29eeb11642f7a` | last commit `6a96083` (2026-09-29), plus 135+/35− uncommitted |
+| 2026-10-29 (re-checked, unchanged) | 1142 | same | committed and pushed as `5baae32` "pre flip commit"; GitHub's file has this same sha256 |
 
 - **Never edit the snapshot.** The live file stays the truth until the
   crossover, and edits keep going there. The port happens on Linux, on its
@@ -23,10 +50,10 @@ copied from this machine's Windows (see the font ruling below).
 - **Re-copy before crossing**, and whenever live has moved on. Then compare:
   `sha256sum crossover/wezterm.lua /mnt/c/Users/Michael/.config/wezterm/wezterm.lua`
 - **Why it exists:** the `Wezterm` repo lives on the Windows disk, outside the
-  WSL export, and its GitHub copy stops at `6a96083`. Everything since
-  2026-09-29 (most of the agent looks, Gungnir, `HOME_REPOS`) exists only on
-  the Windows disk, uncommitted. This repo travels with the WSL export, so the
-  snapshot does too. Committing and pushing `Wezterm` is still Michael's.
+  WSL export. On 2026-10-28, GitHub had only `133b2ff` (2026-09-14). Michael
+  pushed everything as `5baae32` on 2026-10-29 (checked with `git ls-remote`).
+  So the config now has two copies that leave the machine: this snapshot,
+  which rides the WSL export, and GitHub.
 
 ## Carries over unchanged (all inside wezterm.lua)
 
@@ -105,7 +132,8 @@ just need their text updated.
 
 ## Rulings for Michael
 
-- [ ] Commit and push the `Wezterm` repo (everything since `6a96083`).
+- [x] Commit and push the `Wezterm` repo. Michael did, 2026-10-29: `5baae32`,
+  which is on GitHub.
 - [x] **The Linux font: Consolas, copied from Windows.** Michael's ruling,
   2026-10-28. This machine's Windows is OEM (its key is in the firmware), the
   same key will run a Windows VM on the Linux install, and the fonts stay on
@@ -150,9 +178,8 @@ Viper can't message celox; Michael carries this, or celox reads this file.
 - **Install the pinned .deb, not `apt install wezterm-nightly`.** See "The
   WezTerm build" above. It keeps WezTerm inside your exception of record.
 - **The config also rides `/home/bm`** as `~/repos/Viper/crossover/wezterm.lua`,
-  a byte-exact snapshot that gets re-copied before the export. Pushing
-  `Wezterm` is still the record, and it is behind (last commit `6a96083`,
-  2026-09-29).
+  a byte-exact snapshot that gets re-copied before the export. GitHub's
+  `Wezterm` has the same file: commit `5baae32`, pushed 2026-10-29.
 - **Consolas** is in `~/.local/share/fonts/consolas/` (Michael's ruling,
   2026-10-28). It rides `~/.local`, which your spec already carries.
 - **Display scale:** Windows is at 100%. Ubuntu should be set to match.
@@ -169,3 +196,9 @@ Viper can't message celox; Michael carries this, or celox reads this file.
 - **2026-10-28:** Pinned WezTerm `cab25161` .deb downloaded and verified
   (sha256 matches the apt index; the version read from the package). Windows
   scale read as 100%. Handoff for celox written.
+- **2026-10-29:** Pre-flip check. Live, the snapshot and GitHub `5baae32` all
+  have sha256 `a749c103…`. The .deb checksum and the four font files were
+  re-checked. Wrote "Start here on Linux" and a memory pointing to this file,
+  in case `--resume` fails. Michael's ruling: no second copy of the .deb or
+  the fonts. The whole WSL distro comes across, and both can be recovered
+  anyway (fonts from the Windows VM, the .deb from the apt.fury.io URL).
