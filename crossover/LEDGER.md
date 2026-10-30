@@ -258,3 +258,20 @@ Viper can't message celox; Michael carries this, or celox reads this file.
     ALT+M did nothing. GNOME now does it:
     `wm.keybindings minimize ['<Super>h', '<Alt>m']`, at his word. Undo with
     `gsettings reset` on the same key.
+- **2026-10-30, one systemd scope per agent** (asked by celox, at Michael's
+  word). `add_agent` now starts the agent command through
+  `systemd-run --user --scope --quiet --collect --unit="agent-<slug>-$$"`.
+  The slug is the key with anything other than `[%w_.-]` turned into `-`.
+  This matters because systemd-oomd kills one whole leaf scope at a time,
+  and every WezTerm window's processes share the first launch's scope
+  (`app-gnome-org.wezfurlong.wezterm-<pid>.scope`). Proven: `ls-fonts`
+  exits 0. A harness ran the live file's own `add_agent`, and its argv put
+  the command in `app.slice/agent-Viper-scope.probe-<pid>.scope`. The
+  command keeps the same pid, process group and terminal, its exit code
+  passes through, and the scope is collected on exit. Only new launches
+  change. Live proof at 13:46: Michael started wildcat with ALT+A. It runs
+  in `agent-AAA_Wunder-wildcat-92883.scope` (claude 92895), and the tab's
+  bash -lc stays in WezTerm's scope. Undo: drop the `systemd-run` line and
+  the `unit` argument. The
+  `crossover/wezterm.lua` snapshot stays as the pre-flip copy and is not
+  updated.
