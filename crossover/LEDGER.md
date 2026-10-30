@@ -202,3 +202,51 @@ Viper can't message celox; Michael carries this, or celox reads this file.
   in case `--resume` fails. Michael's ruling: no second copy of the .deb or
   the fonts. The whole WSL distro comes across, and both can be recovered
   anyway (fonts from the Windows VM, the .deb from the apt.fury.io URL).
+- **2026-10-30, on Linux** (Ubuntu 24.04.5, GNOME 46, Wayland). The .deb is
+  installed. The config is cloned from `Wezterm` `5baae32` into
+  `~/.config/wezterm`. Uncommitted edits there:
+  - **Spot #1:** the WSL domain line is deleted.
+  - **`enable_wayland = false`:** under native Wayland the window couldn't be
+    moved (WezTerm bug on GNOME's compositor: #5332, #6025, #6296).
+  - **`window_decorations = 'NONE'`:** under X11, `INTEGRATED_BUTTONS|RESIZE`
+    made GNOME 46 add its white title bar, with buttons doubled. There is no
+    X11 setting that keeps the tab-bar buttons without that bar.
+  - **Spot #4:** the roster paths are now `wezterm.home_dir` with `/`.
+    WezTerm's own glob reads 67 Claude agents and 14 Codex repos.
+  - **Spot #5:** WezTerm now runs from `/usr/bin` (`executable_dir` reads
+    `/usr/bin`). This covers ALT+N's new window and the gather picker's
+    `wezterm cli`. Super+N is GNOME's (`focus-active-notification`), so
+    WezTerm never sees it. ALT+N and CTRL+SHIFT+N work.
+  - **The window keys** are Super+H or ALT+M to minimize, Super+Up and
+    Super+Down to maximize and restore (Ubuntu's tiling extension), and
+    Alt+F4 to close.
+  - **Dropped:** building WezTerm with PR #8145 (an unmerged Wayland
+    move/frame fix) was started, then dropped at Michael's word. The source
+    checkout was deleted, and nothing was installed. He also ruled that it
+    didn't need celox. Revisit if WezTerm merges #8145.
+  - **Also tried and rejected:** native Wayland with `'TITLE'`. That gets
+    WezTerm's own frame, a 24 px #3a3a3a strip with buttons and edge resize.
+    Michael didn't like the strip. Chosen: X11 with `'NONE'`. Resizing is
+    Super + right-drag: `gsettings set org.gnome.desktop.wm.preferences
+    resize-with-right-button true`, set at his word. Undo with `gsettings
+    reset` on the same key.
+  - **Dock:** `dash-to-dock click-action 'previews'`, at his word. One
+    click on the WezTerm icon shows thumbnails of its windows. It was
+    `'focus-or-appspread'`, which he disliked. Not yet tried: Dash to Panel,
+    for hover previews; it needs the Extension Manager install.
+  - **Fonts:** terminal 13 (Windows 12), tab bar 12 (Windows 11), at his
+    word.
+  - **Closing:** `skip_close_confirmation_for_processes_named = {}`, so
+    closing any tab or pane asks first, as on Windows.
+  - **OPEN, his sudo:** auto-reload misses saves because the inotify watches
+    are used up. Cursor holds 65,110 of the 65,536 allowed (that cap comes
+    from `/usr/lib/sysctl.d/30-tracker.conf`). Fix:
+    `/etc/sysctl.d/60-inotify-watches.conf` with
+    `fs.inotify.max_user_watches = 524288`, then `sudo sysctl --system`.
+    Until then, CTRL+SHIFT+R.
+  - **Keyboard window switching** is Ubuntu's default: Alt+Tab for every
+    window, Alt+` for one app's windows. He likes Alt+`.
+  - **Minimize:** WezTerm's X11 Hide is an empty function in `cab25161`, so
+    ALT+M did nothing. GNOME now does it:
+    `wm.keybindings minimize ['<Super>h', '<Alt>m']`, at his word. Undo with
+    `gsettings reset` on the same key.

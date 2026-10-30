@@ -1,6 +1,6 @@
 # Viper — Memory Index
 
-- [Crossover to Linux](project_crossover.md) — flipping to native Ubuntu 24.04; pre-flip done 2026-10-29; read crossover/LEDGER.md "Start here" first.
+- [Crossover to Linux](project_crossover.md) — flipped to Ubuntu 24.04 on 2026-10-30; port state + open items in crossover/LEDGER.md Log.
 - [Michael (the Operator)](user_michael.md) — runs 16+ Claude Code agents at once (2026-09-29); holds the eye, owns installs; wants mental models and proof over lore.
 - [Windows / WSL boundary](windows_wsl_boundary.md) — WSL2 seat; nightly wezterm.exe by full path (WezTerm-20260929 pin); stage structural edits, then prove.
 - [Window anatomy, proven](project_window_anatomy.md) — window_frame = the bar and space above it; window_padding = content gap; plus dead ends not to retry.
