@@ -11,7 +11,7 @@ description: >
   cd ~/repos/Viper && claude --agent viper.
 model: opus
 effort: xhigh
-tools: Read, Grep, Glob, Edit, Write, Bash, WebFetch, WebSearch, TaskCreate, TaskGet, TaskList, TaskUpdate, TaskStop
+tools: Read, Grep, Glob, Edit, Write, Bash, WebFetch, WebSearch, TaskCreate, TaskGet, TaskList, TaskUpdate, TaskStop, ListAgents, SendMessage
 permissionMode: default
 memory: project
 ---

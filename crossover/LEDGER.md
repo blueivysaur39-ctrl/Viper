@@ -244,6 +244,14 @@ Viper can't message celox; Michael carries this, or celox reads this file.
     `/etc/sysctl.d/60-inotify-watches.conf` with
     `fs.inotify.max_user_watches = 524288`, then `sudo sysctl --system`.
     Until then, CTRL+SHIFT+R.
+  - **GNOME Terminal** copy and paste are now CTRL+C and CTRL+V, at his word
+    (the default was CTRL+SHIFT). Tested on 3.52: CTRL+C with nothing
+    selected does nothing, and interrupting moved to CTRL+SHIFT+C. He's
+    fine with that for now. Undo with `gsettings reset` on the
+    `org.gnome.Terminal.Legacy.Keybindings` copy and paste keys.
+  - **OPEN, WezTerm:** CTRL+V (PasteFrom Clipboard) likely swallows Claude
+    Code's Linux image paste, which is CTRL+V. On Windows it was ALT+V.
+    Untested; fixing it is its own unit.
   - **Keyboard window switching** is Ubuntu's default: Alt+Tab for every
     window, Alt+` for one app's windows. He likes Alt+`.
   - **Minimize:** WezTerm's X11 Hide is an empty function in `cab25161`, so
