@@ -184,3 +184,109 @@
       • Every future provider takes (assignment_E_T, halo_deck) with zero local clock/replay code,
       emits 1 self-contained ~/Ninsei/<provider>/ object with shared-table provenance (state_table /
       shared source_refs — killing the 88% per-scalar restatement already sitting in Project2503's 55 MB c5 specimen), 1 compact envelope, and 1 cost/plain-reading receipt (Charter lines 11, 13–17).
+
+---
+# 2
+
+ ### 1. Chronicle — Full Ingestion Move, Zero halo-deck, and FOMC's T Stamp
+
+  We are completely aligned. Dropping halo-deck from the events path from day one is the much cleaner
+  cut — events, schedules, FOMC, filings, and news headlines are low-frequency document/ledger state,
+  not market bar or option-chain streams. Teaching halo-deck to replay JSON change-diffs
+  (calendar_profile.py) coupled two unrelated shapes and trapped every calendar tweak behind a halo-deck wheel release.
+
+  Why FOMC already has T (and why the confusion happened):
+
+  • You are right: FOMC already writes a microsecond receipt stamp on disk. Whenever
+  ~/repos/HALO/halo/fomc_keyin.py:288-290 runs, ~/repos/HALO/halo/change_ledger.py:308-310 appends a
+  row to ~/Freeside/HALO.fomc.changes/fomc.jsonl:1-34 with "landed_ts" (e.g., "2026-09-30 14:03:07.851983-06:00", "2026-10-05 11:10:27.893280-06:00").
+  • The only reason borma / aramaki reported "no T predicate" was because inside
+  ~/Freeside/HALO.fomc/fomc.json:6-33 the inline "keyed" field only stored a date ("2026-10-05"), and
+  halo-deck's calendar_profile.py never implemented HALO.fomc.changes. (Side catch on live disk: 2026-10-28 in fomc.json line 22 still has "decision": null — nobody has run fomc_keyin since Oct 5.)
+  • Under Chronicle, every FOMC key-in — just like every Finnhub, BEA, BLS, EDGAR, and News pull —
+  writes an immutable content-addressed vintage <sha256>.json plus an append-only receipt line with
+  visible_by_utc (<= T). We seed Chronicle once with HALO.{earnings,macros,fomc,filings} and their .changes ledgers (landed_ts), so as-of T replay back to 2026-09-30 works natively inside Chronicle
+  with zero halo-deck import.
+
+  Aligned Chronicle (~/repos/Chronicle) architecture — single cutover, zero halo-deck:
+
+  • Moves completely out of HALO into Chronicle:
+      1. build_event_calendar.py + finnhub.py (Finnhub earnings schedules + HALO-004 /stock/earnings
+      actuals + HALO-018 backfill + moved-date cleanup).
+      2. build_macro_calendar.py + bea.py + bls.py (BEA/BLS schedules + HALO-004 actuals + HALO-044
+      reschedule identity).
+      3. fomc_keyin.py (hand-keyed Fed schedule, rate decisions, pressers, minutes — stamping exact UTC
+      visible_by_utc receipts).
+      4. ingest_filings.py + edgar.py (SEC EDGAR filings + HALO-008 Z-as-UTC fix).
+      5. Greenfield News / Headlines ingestion + daily Oracle news briefs (visible_by_utc <= T).
+      6. Ported S2_6 calendar derivation (Handoff/PROJECT2506.md) + Tiferet UTC Markdown calendar
+      renderer (Handoff/GHOSTLINE_03.md).
+  • What HALO and halo-deck drop immediately:
+      • halo-deck does zero events/calendar/FOMC/news work (0.6.0's calendar_profile.py freezes
+      untouched and leaves all active plans).
+      • HALO evicts HALO-004, HALO-008, HALO-018, HALO-044, HALO-119, and 220147 from Air_Lock, and
+      unarms halo.earnings, halo.macros, and halo.filings from gyrx.00/gyrx.12 once Chronicle's console
+      (~/GeoFront/Chronicle/) stands up.
+  • Two clean boundary details to lock for Chronicle:
+      1. expirations (~/repos/HALO/halo/build_expiration_calendar.py:9-24): Unlike
+      Finnhub/BEA/BLS/EDGAR/News, expirations calls Schwab's get_option_expiration_chain under HALO's
+      single schwab_lease and feeds HALO's own ingest_options_chain.py boresight selector. Good news:
+      it already writes plain content-addressed JSONs under HALO.expirations.vintages/<SYM>/<sha256>.json plus plain JSONL lines in
+      ~/Freeside/HALO.expirations.vintage_receipts/receipts.jsonl:370-390 carrying "receipted_utc" and
+      "sha256". Lean: Leave build_expiration_calendar.py in HALO (where Schwab OAuth/lease and option
+      chains live), and have Chronicle read HALO.expirations.vintage_receipts (receipted_utc <= T) +
+      <sha256>.json directly by path and digest (THE_CHARTER.md:52-54 line 5) — 20 lines of stdlib
+      json/hashlib, zero halo-deck, and no second Schwab client.
+      2. Chronicle's ingestion custody root (THE_CHARTER.md:49-68 line 5): Sealed Unit-facing
+      deliverables (calendar .md, sidecar .json, receipt) land in /home/bm/Ninsei/Chronicle/, and Magi
+      loop records land in ~/GeoFront/Chronicle/. Since Ninsei forbids append-only receipt ledgers and
+      keeping Chronicle out of /home/bm/Freeside avoids HALO.index/sweep coupling, lean: give Chronicle
+      one dedicated ingestion/vintage custody root at /home/bm/Chronicle_Store/ (or /home/bm/Chronicle/,
+      named explicitly in Charter line 5).
+
+  ──────
+  ### 2. Why "Stream" Had Two Different Things (1m Vendor Candles vs. Sub-Minute Ticks)
+
+  Your confusion makes complete sense because both live inside ~/repos/HALO/halo/marks_stream.py:94-112
+  on the same single Schwab websocket. Here is what marks_stream actually subscribes to:
+
+  1. Service 1 — CHART_EQUITY & CHART_FUTURES (1m vendor candles):
+      • Emits one closed 1-minute OHLC vendor candle per minute (open, high, low, close + volume on
+      futures/ETFs; no volume column on cash/vol indices).
+      • ~/repos/HALO/halo/stream_bars.py:8-29 writes these into HALO.stream.bars and HALO.stream.record/1m/<SYM>/<date>.csv.
+      • All 10 Schwab symbols — {ES, NQ, RTY, YM, SPY, QQQ} (9 cols with volume) and {SPX, NDX, VIX, VVIX} (8 cols without volume) — already have 41 sessions of clean 1m vendor candles in HALO.stream.record/1m.
+  2. Service 2 — LEVELONE_EQUITIES & LEVELONE_FUTURES (sub-minute ticks):
+      • On that same socket, Schwab also pushes sub-minute Level-1 quote/index ticks every ~1–5 seconds
+      (MARK price + millisecond QUOTE_TIME_MILLIS / TRADE_TIME_MILLIS).
+      • Those ticks do not go into HALO.stream.record/1m. Instead, HALO writes a 5s snapshot to HALO.marks.live / HALO.marks.archive, and dumps every raw websocket message (LEVELONE_* ticks and
+      CHART_* candles mixed together) into HALO.stream.raw (*.jsonl.gz 5-second gzip chunks) via
+      ~/repos/HALO/halo/stream_raw.py:8-26.
+
+
+  Why the friction happened — and the huge shortcut sitting right in front of us:
+
+  • When SEELE_03 wrote PROTO-K6, it used Service 1 (1m vendor candles) for traded futures/ETFs (ES, NQ, RTY, YM, SPY, QQQ), but wrote {SPX, NDX, VIX, VVIX} around Service 2 (sub-minute Level-1 ticks) —
+  asking for millisecond tick timestamps, <= 60s tick age, and <= 5s cross-leg skew (PROTO-K6:307-333, 495-510). That is why klinker noted an 8-column 1m candle cannot silently stand in for sub-minute
+  ticks without a doctrine method update.
+  • Look at what those two choices actually cost us:
+      • Path A — Keep sub-minute ticks (HALO-132): HALO has to build a brand-new halo-deck adapter
+      (HALO-132) that decompresses and scans raw websocket .jsonl.gz chunks in HALO.stream.raw to
+      extract LEVELONE_EQUITIES ticks (and work around vendor quirks like $VIX sending quote_t = 0,
+      noted at ~/repos/HALO/halo/marks_stream.py:31), and Project2505 keeps a separate sampled.py path
+      just for those 4 context indices.
+      • Path B — Switch {SPX, NDX, VIX, VVIX} onto the existing 1m vendor candles (HALO.stream.record/1m) via a narrow SEELE_03 K6 method edition (klinker's named alternative in 231235 §1):
+      Lain wakes at whole minutes + 10s (14:40:10, 15:10:10, 15:40:10 ET) to make 30-minute (T30) ES/NQ
+      forecasts. Using the closed 1m vendor candles in HALO.stream.record/1m puts {SPX, NDX, VIX, VVIX}
+      on the exact same 1m clock grid and fast halo-deck 0.7.0 CSV reader as {ES, NQ, RTY, YM, SPY, QQQ}, kills HALO-132 completely, and eliminates raw .jsonl.gz socket scanning from K6.
+
+  ──────
+  ### Decisions to Lock Before I Write Durable Specs
+
+  1. Chronicle (Gehirn-026): Confirm single-cutover move of earnings, macros, fomc, filings, and news
+  pull/key-in scripts + T receipts + derivation + rendering into ~/repos/Chronicle (zero halo-deck),
+  leaving Schwab expirations in HALO read directly by vintage sha256 + receipt, and naming
+  /home/bm/Chronicle_Store/ (or your preferred folder name) as Chronicle's ingestion root in
+  THE_CHARTER.md line 5?
+  2. Indices {SPX, NDX, VIX, VVIX} (Gehirn-027): Flip my lean from Path A (HALO-132 raw-socket ticks)
+  to Path B — ask klinker for the narrow K6 1m index-candle method edition so we drop HALO-132 and run
+  all 10 Schwab symbols on HALO.stream.record/1m?
