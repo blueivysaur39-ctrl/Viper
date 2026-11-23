@@ -1,6 +1,6 @@
 ---
 name: feedback-terse-and-ask
-description: Michael wants short answers and no unrequested building — a question is not a work order; confirm before creating anything
+description: Michael wants short answers, and a question answered as a question — on "can we...?" answer and wait for the go
 metadata:
   type: feedback
 ---
@@ -31,12 +31,11 @@ He asked "can we set up a wezterm repo...?" and I ran `git init` and committed.
 He also asked me to stop, then I staged a config file anyway. Both wrong.
 "lets dive in" does **not** stay in force after he interrupts.
 
-**Why:** He tracks what changed on his machine and reacted sharply to finding
-artifacts he did not request. Trust depends on the diff matching the ask.
+**Why:** He found things on his machine that he had not asked for: a new
+repository, a commit, a staged file.
 
-**How to apply:** When he phrases something as "can we / could we / what if" —
-answer whether it is possible and wait. Build only on an imperative. After any
-interruption, the go-ahead is void until he re-issues it. Always state plainly
-what was created or modified, and offer the undo.
+**How to apply:** When he asks "can we / could we / what if", answer whether
+it is possible and wait for the go. After he interrupts, stop until he says go
+again. Say plainly what you created or changed.
 
 Related: [[user-michael]]

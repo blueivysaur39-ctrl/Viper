@@ -24,11 +24,29 @@ State as of 2026-10-30:
 WezTerm. He rejected a custom build as too many moving parts.
 
 **How to apply:**
-- No `/mnt/c` means the Linux seat. CLAUDE.md's "What is true now" and
-  [[windows-wsl-boundary]] still describe Windows; rewriting them is an open
-  port item.
+- No `/mnt/c` means the Linux seat. CLAUDE.md was rewritten for Linux on
+  2026-11-22 (ritsuko, at Michael's word). The Windows-era memories,
+  [[windows-wsl-boundary]] among them, went to `Altbau/memory-2026-11-22/`.
+- Since 2026-11-22 viper boots from `.claude/instruktion/viper.md` through
+  its own `CLAUDE_SEATS` row (`Viper/viper`, opus/xhigh). It no longer runs
+  as `--agent`; Michael approved the row himself.
 - Check GNOME's own shortcuts before binding keys. Alt+H is already his
   pane-left key, and Super+N belongs to GNOME.
 - On Linux, auto-reload depends on free inotify watches (see the ledger).
   If a save doesn't show, suspect that before suspecting the config.
+  Separate limit, 2026-11-18: inotify *instances* (max_user_instances 128)
+  ran out (Cursor 38, agy 29); every `wezterm` CLI then panics with EMFILE at
+  config/src/lib.rs:513, so ls-fonts can't prove a save. Corrected
+  2026-11-19 from source: the panic is `recommended_watcher(tx).unwrap()`
+  in watch_path, *after* the config loads, and only when
+  automatically_reload_config is true (lib.rs:636). Setting it false avoids
+  the crash at the cost of auto-reload. kitty survives the same shortage:
+  its watcher is a helper process (`kitten __watch_conf__`) that just fails.
+  Recurred 2026-11-19 with only 2 WezTerm windows (1 instance each): agy 40
+  (7 per Gemini session, each holding 0-2 watches; 6 open), Cursor 38. The count scales with agy
+  sessions, not WezTerm. Watches cap is now 524288 (60-inotify-watches.conf);
+  instances raised 128 -> 1024 in the same file, 2026-11-19, after celox
+  weighed in. If ALT+N dies again, count holders before anything else.
+  ALT+N dies the same way, silently: the spawn succeeds, so complain()
+  never fires, and the child panics. Seen 129 of 128 in use the same day.
 - Keep brights slot 12 ([[inline-code-blue]]).

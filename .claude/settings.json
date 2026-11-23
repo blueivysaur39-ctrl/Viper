@@ -1,7 +1,13 @@
 {
   "permissions": {
     "additionalDirectories": [
-      "/mnt/c/Users/Michael/.config/wezterm"
+      "/home/bm/.config/wezterm"
+    ],
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git -C /home/bm/.config/wezterm add *)",
+      "Bash(git -C /home/bm/.config/wezterm commit *)"
     ]
   }
 }
